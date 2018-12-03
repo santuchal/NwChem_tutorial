@@ -1,0 +1,19 @@
+Simple Input File --SCF geometry optimization
+A simple example of an NWChem input file is an SCF geometry optimization of the nitrogen molecule, using a Dunning cc-pvdz basis set. This input file contains the bare minimum of information the user must specify to run this type of problem -- fewer than ten lines of input, as follows:
+
+		title "Nitrogen cc-pvdz SCF geometry optimization"
+		geometry
+		n00 0
+		n 0 0 1.08
+		end 
+		basis
+		  n library cc-pvdz
+		end
+		task scf optimize
+
+Examining the input line by line, it can be seen that it contains only four directives; TITLE, GEOMETRY, BASIS, and TASK. The TITLE directive is optional, and is provided as a means for the user to more easily identify outputs from different jobs. An initial geometry is specified in Cartesian coordinates and Angstrøms by means of the GEOMETRY directive. The Dunning cc-pvdz basis is obtained from the NWChem basis library, as specified by the BASIS directive input. The TASK directive requests an SCF geometry optimization.
+The GEOMETRY directive defaults to Cartesian coordinates and Angstrøms (options include atomic units and Z-matrix format). The input blocks for the BASIS and GEOMETRY directives are structured in similar fashion, i.e., name, keyword, ..., end (In this simple example, there are no keywords). The BASIS input block must contain basis set information for every atom type in the geometry with which it will be used. Refer to Sections 7 and 8, and Appendix A for a description of available basis sets and a discussion of how to define new ones.
+The last line of this sample input file (task scf optimize) tells the program to optimize the molecular geometry by minimizing the SCF energy. (For a description of possible tasks and the format of the TASK directive, refer to Tasks).
+If the input is stored in the file n2.nw, the command to run this job on a typical UNIX workstation is as follows:
+nwchem n2
+NWChem output is to UNIX standard output, and error messages are sent to both standard output and standard error.

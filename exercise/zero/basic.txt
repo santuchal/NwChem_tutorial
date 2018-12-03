@@ -1,0 +1,19 @@
+Input File Structure
+The structure of an input file reflects the internal structure of NWChem. At the beginning of a calculation, NWChem needs to determine how much memory to use, the name of the database, whether it is a new or restarted job, where to put scratch/permanent files, etc.. It is not necessary to put this information at the top of the input file, however. NWChem will read through the entire input file looking for the start-up directives. In this first pass, all other directives are ignored.
+
+The start-up directives are:
+
+START
+RESTART
+SCRATCH_DIR
+PERMANENT_DIR
+MEMORY
+ECHO
+
+After the input file has been scanned for the start-up directives, it is rewound and read sequentially. Input is processed either by the top-level parser (for the directives listed in Top-level Directives, such as TITLE, SET, ...) or by the parsers for specific computational modules (e.g., SCF, DFT, ...). Any directives that have already been processed (e.g., MEMORY) are ignored. Input is read until a TASK directive (see Tasks) is encountered. A TASK directive requests that a calculation be performed and specifies the level of theory and the operation to be performed. Input processing then stops and the specified task is executed. The position of the TASK directive in effect marks the end of the input for that task. Processing of the input resumes upon the successful completion of the task, and the results of that task are available to subsequent tasks in the same input file.
+The name of the input file is usually provided as an argument to the execute command for NWChem. That is, the execute command looks something like the following: 
+
+nwchem input_file
+
+The default name for the input file is nwchem.nw. If an input file name input_file is specified without an extension, the code assumes .nw as a default extension, and the input filename becomes input_file.nw. If the code cannot locate a file named either input_file or input_file.nw (or nwchem.nw if no file name is provided), an error is reported and execution terminates. The following section presents two input files to illustrate the directive syntax and input file format for NWChem applications.
+

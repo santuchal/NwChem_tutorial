@@ -1,0 +1,41 @@
+Water Molecule Sample Input File
+
+A more complex sample problem is the optimization of a positively charged water molecule using second-order Møller-Plesset perturbation theory (MP2), followed by a computation of frequencies at the optimized geometry. A preliminary SCF geometry optimization is performed using a computationally inexpensive basis set (STO-3G). This yields a good starting guess for the optimal geometry, and any Hessian information generated will be used in the next optimization step. Then the optimization is finished using MP2 and a basis set with polarization functions. The final task is to calculate the MP2 vibrational frequencies. The input file to accomplish these three tasks is as follows:
+
+start h2o_freq
+charge 1
+geometry units angstroms
+ O       0.0  0.0  0.0
+ H       0.0  0.0  1.0
+ H       0.0  1.0  0.0
+end 
+basis
+H library sto-3g
+ O library sto-3g
+end
+scf
+ uhf; doublet
+ print low
+end
+title "H2O+ : STO-3G UHF geometry optimization"
+task scf optimize
+basis
+ H library 6-31g**
+ O library 6-31g**
+end
+title "H2O+ : 6-31g** UMP2 geometry optimization"
+task mp2 optimize
+mp2; print none; end
+scf; print none; end
+title "H2O+ : 6-31g** UMP2 frequencies"
+task mp2 freq
+
+The START directive (START/RESTART tells NWChem that this run is to be started from the beginning. This directive need not be at the beginning of the input file, but it is commonly placed there. Existing database or vector files are to be ignored or overwritten. The entry h2o_freq on the START line is the prefix to be used for all files created by the calculation. This convention allows different jobs to run in the same directory or to share the same scratch directory SCRATCH_DIR/PERMANENT_DIR, as long as they use different prefix names in this field.
+As in the first sample problem, the geometry is given in Cartesian coordinates. In this case, the units are specified as Angstrøms. (Since this is the default, explicit specification of the units is not actually necessary, however.) The CHARGE directive defines the total charge of the system. This calculation is to be done on an ion with charge +1.
+
+A small basis set (STO-3G) is specified for the intial geometry optimization. Next, the multiple lines of the first SCF directive in the scf ...end block specify details about the SCF calculation to be performed. Unrestricted Hartree-Fock is chosen here (by specifying the keyword uhf), rather than the default, restricted open-shell high-spin Hartree-Fock (ROHF). This is necessary for the subsequent MP2 calculation, because only UMP2 is currently available for open-shell systems (see Section 4). For open-shell systems, the spin multiplicity has to be specified (using doublet in this case), or it defaults to singlet. The print level is set to low to avoid verbose output for the starting basis calculations.
+
+All input up to this point affects only the settings in the runtime database. The program takes its information from this database, so the sequence of directives up to the first TASK directive is irrelevant. An exchange of order of the different blocks or directives would not affect the result. The TASK directive, however, must be specified after all relevant input for a given problem. The TASK directive causes the code to perform the specified calculation using the parameters set in the preceding directives. In this case, the first task is an SCF calculation with geometry optimization, specified with the input scf and optimize. (See Tasks for a list of available tasks and operations.)
+
+After the completion of any task, settings in the database are used in subsequent tasks without change, unless they are overridden by new input directives. In this example, before the second task (task mp2 optimize), a better basis set (6-31G**) is defined and the title is changed. The second TASK directive invokes an MP2 geometry optimization.
+Once the MP2 optimization is completed, the geometry obtained in the calculation is used to perform a frequency calculation. This task is invoked by the keyword freq in the final TASK directive, task mp2 freq. The second derivatives of the energy are calculated as numerical derivatives of analytical gradients. The intermediate energies and gradients are not of interest in this case, so output from the SCF and MP2 modules is disabled with the PRINT directives.
